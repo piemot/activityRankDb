@@ -1,174 +1,256 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+CREATE DATABASE  IF NOT EXISTS `dbShard` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `dbShard`;
+-- MySQL dump 10.13  Distrib 8.0.20, for Win64 (x86_64)
+--
+-- Host:     Database: dbShard
+-- ------------------------------------------------------
+-- Server version	5.7.30
 
-CREATE TABLE `guild` (
-	`guildId` BIGINT NOT NULL,
-	`prefix` varchar(32) NOT NULL DEFAULT 'ar!',
-    `tokens` INT NOT NULL DEFAULT '100',
-    `tokensFueled` INT NOT NULL DEFAULT '0',
-	`voteTag` varchar(56) NOT NULL DEFAULT 'likes',
-	`voteEmote` varchar(128) NOT NULL DEFAULT ':heart:',
-    `downvoteEmote` varchar(128) NOT NULL DEFAULT ':x:',
-	`bonusTag` varchar(56) NOT NULL DEFAULT 'bonus',
-	`bonusEmote` varchar(128) NOT NULL DEFAULT ':trophy:',
-	`entriesPerPage` SMALLINT NOT NULL DEFAULT '12',
-	`showVoicescore` TINYINT NOT NULL DEFAULT '1',
-	`showTextscore` TINYINT NOT NULL DEFAULT '1',
-	`showVotescore` TINYINT NOT NULL DEFAULT '1',
-	`notifyLevelupDm` TINYINT NOT NULL DEFAULT '0',
-	`notifyLevelupCurrentChannel` TINYINT NOT NULL DEFAULT '0',
-	`notifyLevelupOnlyWithRole` TINYINT NOT NULL DEFAULT '0',
-	`takeAwayAssignedRolesOnLevelDown` TINYINT NOT NULL DEFAULT '0',
-    `levelFactor` INT NOT NULL DEFAULT '100',
-	`voteCooldownSeconds` INT NOT NULL DEFAULT '1800',
-	`textMessageCooldownSeconds` SMALLINT NOT NULL DEFAULT '0',
-	`xpPerVoiceMinute` SMALLINT NOT NULL DEFAULT '3',
-	`xpPerTextMessage` SMALLINT NOT NULL DEFAULT '6',
-	`xpPerVote` SMALLINT NOT NULL DEFAULT '30',
-	`xpPerBonus` SMALLINT NOT NULL DEFAULT '1',
-	`bonusPerTextMessage` SMALLINT NOT NULL DEFAULT '6',
-	`bonusPerVoiceMinute` SMALLINT NOT NULL DEFAULT '3',
-	`bonusPerVote` SMALLINT NOT NULL DEFAULT '20',
-	`bonusUntilDate` BIGINT NOT NULL DEFAULT '0',
-    `allowReactionVotes` TINYINT NOT NULL DEFAULT '0',
-	`allowMutedXp` TINYINT NOT NULL DEFAULT '1',
-	`allowSoloXp` TINYINT NOT NULL DEFAULT '1',
-    `allowDownvotes` TINYINT NOT NULL DEFAULT '1',
-	`autopost_levelup` BIGINT NOT NULL DEFAULT '0',
-	`autopost_serverJoin` BIGINT NOT NULL DEFAULT '0',
-	`autopost_serverLeave` BIGINT NOT NULL DEFAULT '0',
-	`autopost_voiceChannelJoin` BIGINT NOT NULL DEFAULT '0',
-	`autopost_voiceChannelLeave` BIGINT NOT NULL DEFAULT '0',
-    `autoname_totalUserCount` BIGINT NOT NULL DEFAULT '0',
-	`autoname_onlineUserCount` BIGINT NOT NULL DEFAULT '0',
-	`autoname_activeUsersLast24h` BIGINT NOT NULL DEFAULT '0',
-	`autoname_serverJoinsLast24h` BIGINT NOT NULL DEFAULT '0',
-	`autoname_serverLeavesLast24h` BIGINT NOT NULL DEFAULT '0',
-	`levelupMessage` varchar(2048) NOT NULL DEFAULT '',
-	`serverJoinMessage` varchar(1024) NOT NULL DEFAULT '',
-	`serverLeaveMessage` varchar(1024) NOT NULL DEFAULT '',
-	`voiceChannelJoinMessage` varchar(512) NOT NULL DEFAULT '',
-	`voiceChannelLeaveMessage` varchar(512) NOT NULL DEFAULT '',
-	`roleAssignmentMessage` varchar(1024) NOT NULL DEFAULT '',
-	`roleDeassignmentMessage` varchar(1024) NOT NULL DEFAULT '',
-    `lastCommandDate` BIGINT NOT NULL DEFAULT '0',
-	`joinedAtDate` BIGINT NOT NULL DEFAULT '0',
-	`leftAtDate` BIGINT NOT NULL DEFAULT '0',
-    `addDate` BIGINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE TABLE `guildMember` (
-  `guildId` BIGINT NOT NULL,
-  `userId` BIGINT NOT NULL,
-  `notifyLevelupDm` TINYINT NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--
+-- Table structure for table `bonus`
+--
 
-CREATE TABLE `guildChannel` (
-  `guildId` BIGINT NOT NULL,
-  `channelId` BIGINT NOT NULL,
-  `noXp` TINYINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `guildRole` (
-  `guildId` BIGINT NOT NULL,
-  `roleId` BIGINT NOT NULL,
-  `assignLevel` INT NOT NULL DEFAULT '0',
-  `deassignLevel` INT NOT NULL DEFAULT '0',
-  `assignMessage` varchar(512) NOT NULL DEFAULT '',
-  `deassignMessage` varchar(512) NOT NULL DEFAULT '',
-  `noXp` TINYINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `textMessage` (
-  `guildId` BIGINT NOT NULL,
-  `userId` BIGINT NOT NULL,
-  `channelId` BIGINT NOT NULL,
-  `alltime` INT NOT NULL DEFAULT '0',
-  `year` INT NOT NULL DEFAULT '0',
-  `month` INT NOT NULL DEFAULT '0',
-  `week` INT NOT NULL DEFAULT '0',
-  `day` INT NOT NULL DEFAULT '0',
-  `changeDate` BIGINT NOT NULL DEFAULT '0',
-  `addDate` BIGINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `voiceMinute` (
-  `guildId` BIGINT NOT NULL,
-  `userId` BIGINT NOT NULL,
-  `channelId` BIGINT NOT NULL,
-  `alltime` INT NOT NULL DEFAULT '0',
-  `year` INT NOT NULL DEFAULT '0',
-  `month` INT NOT NULL DEFAULT '0',
-  `week` INT NOT NULL DEFAULT '0',
-  `day` INT NOT NULL DEFAULT '0',
-  `changeDate` BIGINT NOT NULL DEFAULT '0',
-  `addDate` BIGINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `vote` (
-  `guildId` BIGINT NOT NULL,
-  `userId` BIGINT NOT NULL,
-  `alltime` INT NOT NULL DEFAULT '0',
-  `year` INT NOT NULL DEFAULT '0',
-  `month` INT NOT NULL DEFAULT '0',
-  `week` INT NOT NULL DEFAULT '0',
-  `day` INT NOT NULL DEFAULT '0',
-  `changeDate` BIGINT NOT NULL DEFAULT '0',
-  `addDate` BIGINT NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+DROP TABLE IF EXISTS `bonus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bonus` (
-  `guildId` BIGINT NOT NULL,
-  `userId` BIGINT NOT NULL,
-  `alltime` INT NOT NULL DEFAULT '0',
-  `year` INT NOT NULL DEFAULT '0',
-  `month` INT NOT NULL DEFAULT '0',
-  `week` INT NOT NULL DEFAULT '0',
-  `day` INT NOT NULL DEFAULT '0',
-  `changeDate` BIGINT NOT NULL DEFAULT '0',
-  `addDate` BIGINT NOT NULL DEFAULT '0'
+  `guildId` bigint(20) NOT NULL,
+  `userId` bigint(20) NOT NULL,
+  `alltime` int(11) NOT NULL DEFAULT '0',
+  `year` int(11) NOT NULL DEFAULT '0',
+  `month` int(11) NOT NULL DEFAULT '0',
+  `week` int(11) NOT NULL DEFAULT '0',
+  `day` int(11) NOT NULL DEFAULT '0',
+  `changeDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`userId`),
+  KEY `guildId` (`guildId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `guild`
+--
+
+DROP TABLE IF EXISTS `guild`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `guild` (
+  `guildId` bigint(20) NOT NULL,
+  `prefix` varchar(32) NOT NULL DEFAULT 'ar!',
+  `tokens` int(11) NOT NULL DEFAULT '0',
+  `tokensBurned` int(11) NOT NULL DEFAULT '0',
+  `voteTag` varchar(56) NOT NULL DEFAULT 'likes',
+  `voteEmote` varchar(128) NOT NULL DEFAULT ':heart:',
+  `bonusTag` varchar(56) NOT NULL DEFAULT 'bonus',
+  `bonusEmote` varchar(128) NOT NULL DEFAULT ':trophy:',
+  `entriesPerPage` smallint(6) NOT NULL DEFAULT '12',
+  `showNicknames` tinyint(4) NOT NULL DEFAULT '0',
+  `showVoicescore` tinyint(4) NOT NULL DEFAULT '1',
+  `showTextscore` tinyint(4) NOT NULL DEFAULT '1',
+  `showVotescore` tinyint(4) NOT NULL DEFAULT '1',
+  `notifyLevelupDm` tinyint(4) NOT NULL DEFAULT '0',
+  `notifyLevelupCurrentChannel` tinyint(4) NOT NULL DEFAULT '0',
+  `notifyLevelupWithRole` tinyint(4) NOT NULL DEFAULT '1',
+  `notifyLevelupOnlyWithRole` tinyint(4) NOT NULL DEFAULT '0',
+  `takeAwayAssignedRolesOnLevelDown` tinyint(4) NOT NULL DEFAULT '0',
+  `levelFactor` int(11) NOT NULL DEFAULT '100',
+  `voteCooldownSeconds` int(11) NOT NULL DEFAULT '1800',
+  `textMessageCooldownSeconds` smallint(6) NOT NULL DEFAULT '0',
+  `xpPerVoiceMinute` smallint(6) NOT NULL DEFAULT '3',
+  `xpPerTextMessage` smallint(6) NOT NULL DEFAULT '6',
+  `xpPerVote` smallint(6) NOT NULL DEFAULT '30',
+  `xpPerBonus` smallint(6) NOT NULL DEFAULT '1',
+  `bonusPerTextMessage` smallint(6) NOT NULL DEFAULT '6',
+  `bonusPerVoiceMinute` smallint(6) NOT NULL DEFAULT '3',
+  `bonusPerVote` smallint(6) NOT NULL DEFAULT '20',
+  `bonusUntilDate` bigint(20) NOT NULL DEFAULT '0',
+  `allowReactionVotes` tinyint(4) NOT NULL DEFAULT '0',
+  `allowMutedXp` tinyint(4) NOT NULL DEFAULT '1',
+  `allowDeafenedXp` tinyint(4) NOT NULL DEFAULT '1',
+  `allowSoloXp` tinyint(4) NOT NULL DEFAULT '1',
+  `allowInvisibleXp` tinyint(4) NOT NULL DEFAULT '1',
+  `allowDownvotes` tinyint(4) NOT NULL DEFAULT '1',
+  `commandOnlyChannel` bigint(20) NOT NULL DEFAULT '0',
+  `autopost_levelup` bigint(20) NOT NULL DEFAULT '0',
+  `autopost_serverJoin` bigint(20) NOT NULL DEFAULT '0',
+  `autopost_serverLeave` bigint(20) NOT NULL DEFAULT '0',
+  `autopost_voiceChannelJoin` bigint(20) NOT NULL DEFAULT '0',
+  `autopost_voiceChannelLeave` bigint(20) NOT NULL DEFAULT '0',
+  `autoname_totalUserCount` bigint(20) NOT NULL DEFAULT '0',
+  `autoname_onlineUserCount` bigint(20) NOT NULL DEFAULT '0',
+  `autoname_activeUsersLast24h` bigint(20) NOT NULL DEFAULT '0',
+  `autoname_serverJoinsLast24h` bigint(20) NOT NULL DEFAULT '0',
+  `autoname_serverLeavesLast24h` bigint(20) NOT NULL DEFAULT '0',
+  `levelupMessage` varchar(2048) NOT NULL DEFAULT '',
+  `serverJoinMessage` varchar(1024) NOT NULL DEFAULT '',
+  `serverLeaveMessage` varchar(1024) NOT NULL DEFAULT '',
+  `voiceChannelJoinMessage` varchar(512) NOT NULL DEFAULT '',
+  `voiceChannelLeaveMessage` varchar(512) NOT NULL DEFAULT '',
+  `roleAssignMessage` varchar(1024) NOT NULL DEFAULT '',
+  `roleDeassignMessage` varchar(1024) NOT NULL DEFAULT '',
+  `lastCommandDate` bigint(20) NOT NULL DEFAULT '0',
+  `lastTokenBurnDate` bigint(20) NOT NULL DEFAULT '0',
+  `joinedAtDate` bigint(20) NOT NULL DEFAULT '0',
+  `leftAtDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `guildChannel`
+--
+
+DROP TABLE IF EXISTS `guildChannel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `guildChannel` (
+  `guildId` bigint(20) NOT NULL,
+  `channelId` bigint(20) NOT NULL,
+  `noXp` tinyint(4) NOT NULL DEFAULT '0',
+  `noCommand` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`channelId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `guildMember`
+--
+
+DROP TABLE IF EXISTS `guildMember`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `guildMember` (
+  `guildId` bigint(20) NOT NULL,
+  `userId` bigint(20) NOT NULL,
+  `notifyLevelupDm` tinyint(4) NOT NULL DEFAULT '1',
+  `tokensBurned` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `guildRole`
+--
+
+DROP TABLE IF EXISTS `guildRole`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `guildRole` (
+  `guildId` bigint(20) NOT NULL,
+  `roleId` bigint(20) NOT NULL,
+  `assignLevel` int(11) NOT NULL DEFAULT '0',
+  `deassignLevel` int(11) NOT NULL DEFAULT '0',
+  `assignMessage` varchar(1024) NOT NULL DEFAULT '',
+  `deassignMessage` varchar(1024) NOT NULL DEFAULT '',
+  `noXp` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`roleId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `textMessage`
+--
+
+DROP TABLE IF EXISTS `textMessage`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `textMessage` (
+  `guildId` bigint(20) NOT NULL,
+  `userId` bigint(20) NOT NULL,
+  `channelId` bigint(20) NOT NULL,
+  `alltime` int(11) NOT NULL DEFAULT '0',
+  `year` int(11) NOT NULL DEFAULT '0',
+  `month` int(11) NOT NULL DEFAULT '0',
+  `week` int(11) NOT NULL DEFAULT '0',
+  `day` int(11) NOT NULL DEFAULT '0',
+  `changeDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`userId`,`channelId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `userId` BIGINT NOT NULL,
-  `lastDblUpvoteDate` BIGINT NOT NULL DEFAULT '0',
-  `tokens` INT NOT NULL DEFAULT '10',
-  `tokensFueled` INT NOT NULL DEFAULT '0',
-  `voteMultiplier` INT NOT NULL DEFAULT '1',
-  `voteMultiplierUntil` BIGINT NOT NULL DEFAULT '0',
-  `addDate` BIGINT NOT NULL DEFAULT '0'
+  `userId` bigint(20) NOT NULL,
+  `tokens` int(11) NOT NULL DEFAULT '10',
+  `tokensBought` int(11) NOT NULL DEFAULT '0',
+  `voteMultiplier` int(11) NOT NULL DEFAULT '1',
+  `voteMultiplierUntil` bigint(20) NOT NULL DEFAULT '0',
+  `lastAskForPremiumDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`userId`);
+--
+-- Table structure for table `voiceMinute`
+--
 
-ALTER TABLE `bonus`
-  ADD PRIMARY KEY (`guildId`,`userId`),
-  ADD KEY `guildId` (`guildId`);
+DROP TABLE IF EXISTS `voiceMinute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `voiceMinute` (
+  `guildId` bigint(20) NOT NULL,
+  `userId` bigint(20) NOT NULL,
+  `channelId` bigint(20) NOT NULL,
+  `alltime` int(11) NOT NULL DEFAULT '0',
+  `year` int(11) NOT NULL DEFAULT '0',
+  `month` int(11) NOT NULL DEFAULT '0',
+  `week` int(11) NOT NULL DEFAULT '0',
+  `day` int(11) NOT NULL DEFAULT '0',
+  `changeDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`userId`,`channelId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-ALTER TABLE `guild`
-  ADD PRIMARY KEY (`guildId`);
+--
+-- Table structure for table `vote`
+--
 
-ALTER TABLE `guildChannel`
-  ADD PRIMARY KEY (`guildId`,`channelId`) ;
+DROP TABLE IF EXISTS `vote`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `vote` (
+  `guildId` bigint(20) NOT NULL,
+  `userId` bigint(20) NOT NULL,
+  `alltime` int(11) NOT NULL DEFAULT '0',
+  `year` int(11) NOT NULL DEFAULT '0',
+  `month` int(11) NOT NULL DEFAULT '0',
+  `week` int(11) NOT NULL DEFAULT '0',
+  `day` int(11) NOT NULL DEFAULT '0',
+  `changeDate` bigint(20) NOT NULL DEFAULT '0',
+  `addDate` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guildId`,`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-ALTER TABLE `guildMember`
-  ADD PRIMARY KEY (`guildId`,`userId`);
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-ALTER TABLE `guildRole`
-  ADD PRIMARY KEY (`guildId`,`roleId`);
-
-ALTER TABLE `textMessage`
-  ADD PRIMARY KEY (`guildId`,`userId`,`channelId`);
-
-ALTER TABLE `voiceMinute`
-  ADD PRIMARY KEY (`guildId`,`userId`,`channelId`);
-
-ALTER TABLE `vote`
-  ADD PRIMARY KEY (`guildId`,`userId`);
-
-COMMIT;
+-- Dump completed on 2020-11-02  0:38:02
